@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DRASKY_LAND | Oficiální Kronika</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f5f5f7;
+            --fg: #1d1d1f;
+            --accent: #0071e3;
+            --glass: rgba(255, 255, 255, 0.7);
+            --shadow: 0 20px 40px rgba(0,0,0,0.06);
+            --radius: 30px;
+            --discord: #5865F2;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--fg); line-height: 1.6; overflow-x: hidden; }
+
+        /* --- BACKGROUND --- */
+        .bg-gradient { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(at 0% 0%, #ffffff 0%, #f5f5f7 100%); }
+        .blob { position: fixed; width: 800px; height: 800px; background: radial-gradient(circle, rgba(0,113,227,0.08) 0%, rgba(255,255,255,0) 60%); z-index: -1; border-radius: 50%; animation: move 30s infinite alternate; }
+        @keyframes move { 0% { transform: translate(-30%, -30%); } 100% { transform: translate(40%, 20%); } }
+
+        header { position: fixed; width: 100%; padding: 15px 5%; top: 0; z-index: 100; background: rgba(255,255,255,0.5); backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .logo { font-weight: 800; font-size: 1.2rem; letter-spacing: -1px; text-transform: uppercase; }
+        nav a { text-decoration: none; color: var(--fg); margin-left: 25px; font-weight: 600; font-size: 0.8rem; opacity: 0.6; transition: 0.3s; text-transform: uppercase; }
+        nav a:hover { opacity: 1; color: var(--accent); }
+
+        /* --- HERO BANNER --- */
+        .hero { height: 100vh; display: flex; justify-content: center; align-items: center; text-align: center; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('thumb-1920-1321959.png') center/cover; color: #fff; padding: 0 20px; }
+        .hero-content { max-width: 900px; padding: 60px; border-radius: 40px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); }
+        .hero h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 800; text-transform: uppercase; margin-bottom: 15px; letter-spacing: -2px; }
+        .hero .lore-text { font-size: 1.2rem; font-weight: 300; font-style: italic; margin-bottom: 40px; opacity: 0.9; line-height: 1.8; }
+        
+        .btn-group { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .btn { background: #fff; color: #000; padding: 18px 35px; border-radius: 50px; text-decoration: none; font-weight: 700; transition: 0.3s; cursor: pointer; border: none; font-size: 1rem; }
+        .btn-discord { background: var(--discord); color: #fff; }
+        .btn:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
+        section { padding: 100px 10%; }
+        h2 { font-size: 2.5rem; font-weight: 800; text-align: center; margin-bottom: 30px; letter-spacing: -1px; }
+
+        /* --- STATUS BAR --- */
+        .status-bar { max-width: 1000px; margin: -50px auto 50px; background: #fff; padding: 25px; border-radius: var(--radius); display: flex; justify-content: space-around; align-items: center; box-shadow: var(--shadow); position: relative; z-index: 10; flex-wrap: wrap; gap: 20px; }
+        .status-item { text-align: center; }
+        .status-val { font-size: 1.5rem; font-weight: 800; display: block; }
+        .status-lbl { font-size: 0.65rem; font-weight: 700; opacity: 0.4; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block; }
+        .btn-start { background: #34c759; color: #fff; padding: 10px 20px; border-radius: 15px; text-decoration: none; font-weight: 700; font-size: 0.8rem; transition: 0.3s; display: inline-block; }
+        .btn-start:hover { transform: scale(1.05); background: #28a745; }
+
+        /* --- INFO O SVĚTĚ --- */
+        .info-card { background: #fff; padding: 50px; border-radius: var(--radius); box-shadow: var(--shadow); max-width: 1000px; margin: 0 auto; text-align: center; }
+        .info-card p { font-size: 1.1rem; opacity: 0.8; margin-bottom: 20px; }
+
+        /* --- PRAVIDLA --- */
+        .rules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 40px; }
+        .rule-item { background: var(--glass); padding: 30px; border-radius: 20px; border: 1px solid rgba(0,0,0,0.05); }
+        .rule-item h4 { color: var(--accent); margin-bottom: 10px; }
+
+        /* --- TRAILER --- */
+        .video-wrapper { position: relative; width: 100%; max-width: 1000px; margin: 40px auto; aspect-ratio: 16/9; border-radius: var(--radius); overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.2); border: 8px solid #fff; }
+        .video-wrapper iframe { width: 100%; height: 100%; border: none; }
+
+        /* --- QUEST TABULKA --- */
+        .quest-container { background: #fff; border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); overflow-x: auto; margin-top: 30px; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th { text-align: left; padding: 20px; border-bottom: 2px solid #f0f0f0; font-size: 0.8rem; text-transform: uppercase; opacity: 0.5; }
+        td { padding: 20px; border-bottom: 1px solid #f8f8f8; font-size: 0.95rem; }
+        .reward-tag { background: #e8f2ff; color: var(--accent); padding: 5px 12px; border-radius: 10px; font-weight: 800; font-size: 0.8rem; }
+
+        /* --- CÍL SEKCE --- */
+        .goal-box { background: #1d1d1f; color: #fff; padding: 60px; border-radius: 50px; text-align: center; margin-top: 50px; }
+        .goal-box h3 { color: var(--accent); font-size: 2rem; margin-bottom: 20px; }
+
+        /* --- GALERIE --- */
+        .filter-btns { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; }
+        .filter-btn { padding: 10px 25px; border-radius: 30px; border: none; background: #eee; cursor: pointer; font-weight: 700; transition: 0.3s; }
+        .filter-btn.active { background: var(--fg); color: #fff; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .gallery-item { border-radius: var(--radius); overflow: hidden; height: 250px; cursor: pointer; position: relative; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .gallery-item:hover img { transform: scale(1.1); filter: brightness(0.8); }
+
+        /* --- JOIN BOX --- */
+        .join-box { text-align: center; padding: 100px 10%; background: #fff; }
+        .ip-copy-box { display: inline-block; background: var(--bg); padding: 20px 40px; border-radius: 20px; border: 2px dashed var(--accent); cursor: pointer; transition: 0.3s; margin-top: 20px; }
+        .ip-copy-box:hover { background: var(--accent-light); transform: scale(1.02); }
+        .ip-text { font-family: monospace; font-size: 1.8rem; font-weight: 800; color: var(--accent); }
+
+        footer { text-align: center; padding: 50px; opacity: 0.4; font-size: 0.8rem; }
+
+        @media (max-width: 900px) { section { padding: 60px 5%; } .hero-content { padding: 40px 20px; } .status-bar { flex-direction: column; } }
+    </style>
+</head>
+<body>
+
+    <div class="bg-gradient"></div>
+    <div class="blob"></div>
+
+    <header>
+        <div class="logo">DRASKY_LAND.</div>
+        <nav>
+            <a href="#info">O světě</a>
+            <a href="#pravidla">Zákoník</a>
+            <a href="#questy">Výpravy</a>
+            <a href="#galerie">Galerie</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>DRASKY_LAND</h1>
+            <p class="lore-text">„Středozemě padla do šedi. Čtyři elementy byly rozsety do nejzazších koutů světa. Hledáme hrdiny, kteří se nebojí kráčet 10 000 mil pro záchranu našeho světa.“</p>
+            <div class="btn-group">
+                <button class="btn" onclick="copyIP()">Kopírovat IP</button>
+                <a href="https://discord.gg/vůj-odkaz" class="btn btn-discord">Discord Komunita</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="status-bar">
+        <div class="status-item">
+            <span class="status-lbl">Stav světa</span>
+            <span id="server-status" class="status-val" style="color: #ff3b30;">Načítám...</span>
+        </div>
+        <div class="status-item">
+            <span class="status-lbl">Aktuálně hraje</span>
+            <span id="player-count" class="status-val" style="color: var(--accent);">0 / 20</span>
+        </div>
+        <div class="status-item">
+            <span class="status-lbl">Verze hry</span>
+            <span class="status-val">1.21.11 Purpur</span>
+        </div>
+    </div>
+
+    <section id="info">
+        <div class="info-card">
+            <h2>Vítejte v Poslední Pevnosti</h2>
+            <p>Naše SMP není jen o přežití, je o legendě. Zakládáme si na Semi-Vanilla RPG zážitku, kde tvé činy mění podobu světa. Máme rozrostlý spawn, stabilní ekonomiku postavenou na diamantech a komunitu, která drží při sobě.</p>
+            <p><strong>Žádné zbytečné módy, které ničí hru – jen čistá fantasy jízda.</strong></p>
+        </div>
+    </section>
+
+    <section id="pravidla" style="background: rgba(255,255,255,0.4);">
+        <h2>Zákoník Středozemě</h2>
+        <div class="rules-grid">
+            <div class="rule-item">
+                <h4>Respektuj ostatní</h4>
+                <p>Žádný griefing, okrádání nebo ničení cizích staveb. Stavíme společně.</p>
+            </div>
+            <div class="rule-item">
+                <h4>Férový boj</h4>
+                <p>PVP je povoleno pouze po vzájemné dohodě nebo v určených arénách.</p>
+            </div>
+            <div class="rule-item">
+                <h4>Čistá krajina</h4>
+                <p>Nestav nevzhledné 1x1 věže a po těžbě dřeva vždy sázej nové stromky.</p>
+            </div>
+            <div class="rule-item">
+                <h4>Hlas hrdiny</h4>
+                <p>Žádný spam, toxicita nebo reklama v chatu. Buďme k sobě slušní.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="trailer">
+        <h2>Volání osudu</h2>
+        <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+        </div>
+    </section>
+
+    <section id="questy">
+        <h2>⚔️ Seznam aktivních výprav</h2>
+        <div class="quest-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Quest</th>
+                        <th>Lokalita</th>
+                        <th>Odměna</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Stříbrná loutna</strong></td>
+                        <td>Věž v horách (1500m SV)</td>
+                        <td><span class="reward-tag">5x Dia + Železo</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Koruna krále</strong></td>
+                        <td>Podmořské trosky (2000m J)</td>
+                        <td><span class="reward-tag">8x Dia + Lektvary</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Srdce dubu</strong></td>
+                        <td>Temný les (3000m Z)</td>
+                        <td><span class="reward-tag">6x Dia + Gapple</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Písečný krystal</strong></td>
+                        <td>Pyramida v poušti (4500m SZ)</td>
+                        <td><span class="reward-tag">12x Dia + Totem</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Expedice Moria</strong></td>
+                        <td>Jeskyně (y -50)</td>
+                        <td><span class="reward-tag">10x Dia + Netherite</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dračí vejce</strong></td>
+                        <td>Svatyně Ohně (5000m J)</td>
+                        <td><span class="reward-tag">15x Dia + Gear</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Zápisky kartografa</strong></td>
+                        <td>Větrný mlýn (2500m V)</td>
+                        <td><span class="reward-tag">7x Dia + Nápověda</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="goal-box">
+            <h3>Hlavní CÍL: Obnova Elementů</h3>
+            <p>Všechny questy vedou k jednomu osudu. Tvým hlavním cílem je najít <strong>Čtyři Prastaré Chrámy</strong>, které leží na hranicích světa (10 000 bloků od spawnu).</p>
+            <p style="margin-top: 15px; opacity: 0.8;">Pouze pokud hrdinové doručí artefakty z těchto míst, odemkne se nová éra serveru, nové suroviny a společné výhody pro všechny hráče. Cesta je dlouhá, vezmi si koně a spoj se s ostatními!</p>
+        </div>
+    </section>
+
+    <section id="galerie">
+        <h2>Galerie: Obrazy z našich zemí</h2>
+        <div class="filter-btns">
+            <button class="filter-btn active" data-filter="all">Vše</button>
+            <button class="filter-btn" data-filter="spawn">Spawn</button>
+            <button class="filter-btn" data-filter="action">Výpravy</button>
+        </div>
+        <div class="gallery-grid">
+            <div class="gallery-item" data-category="spawn"><img src="spawn.jpg" alt="Spawn"></div>
+            <div class="gallery-item" data-category="action"><img src="parkur.jpg" alt="Parkur"></div>
+            <div class="gallery-item" data-category="spawn"><img src="campfire.jpg" alt="Campfire"></div>
+            <div class="gallery-item" data-category="action"><img src="altar.jpg" alt="Altar"></div>
+        </div>
+    </section>
+
+    <section class="join-box">
+        <h2>🔗 Připoj se k nám!</h2>
+        <p>Tvá legenda začíná právě teď.</p>
+        <div class="ip-copy-box" onclick="copyIP()">
+            <span class="ip-text">draskylandsmp.fallix.pro</span>
+            <p style="font-size: 0.7rem; opacity: 0.5; margin-top: 5px;">KLIKNI PRO KOPÍROVÁNÍ</p>
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2026 DRASKY_LAND SMP. Všechna práva vyhrazena.
+    </footer>
+
+    <script>
+        function copyIP() {
+            const ip = "draskylandsmp.fallix.pro";
+            navigator.clipboard.writeText(ip);
+            alert("IP adresa byla zkopírována: " + ip);
+        }
+
+        // --- SKRIPT PRO STATUS SERVERU ---
+        async function updateServerStatus() {
+            const ip = "draskylandsmp.fallix.pro";
+            const statusText = document.getElementById('server-status');
+            const playerCount = document.getElementById('player-count');
+
+            try {
+                const response = await fetch(`https://api.mcstatus.io/v2/status/java/draskyland.falix.pro`);
+                const data = await response.json();
+
+                if (data.online) {
+                    statusText.innerText = "ONLINE";
+                    statusText.style.color = "#34c759"; // Zelená
+                    playerCount.innerText = `${data.players.online} / ${data.players.max}`;
+                } else {
+                    statusText.innerText = "OFFLINE";
+                    statusText.style.color = "#ff3b30"; // Červená
+                    playerCount.innerText = "0 / 0";
+                }
+            } catch (error) {
+                statusText.innerText = "CHYBA API";
+            }
+        }
+        updateServerStatus();
+        setInterval(updateServerStatus, 30000);
+
+        // Filtrování galerie
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filter = btn.getAttribute('data-filter');
+
+                galleryItems.forEach(item => {
+                    if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Animace scrollování
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = "translateY(0)";
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.info-card, .rule-item, .quest-container, .goal-box, .gallery-item').forEach(el => {
+            el.style.opacity = 0;
+            el.style.transform = "translateY(30px)";
+            el.style.transition = "0.8s ease-out";
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
